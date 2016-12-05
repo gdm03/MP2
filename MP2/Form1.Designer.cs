@@ -55,8 +55,8 @@
             // openJPEGImagesToolStripMenuItem
             // 
             this.openJPEGImagesToolStripMenuItem.Name = "openJPEGImagesToolStripMenuItem";
-            this.openJPEGImagesToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.openJPEGImagesToolStripMenuItem.Text = "Open frame images";
+            this.openJPEGImagesToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openJPEGImagesToolStripMenuItem.Text = "Select JPG directory";
             this.openJPEGImagesToolStripMenuItem.Click += new System.EventHandler(this.openJPEGImagesToolStripMenuItem_Click);
             // 
             // MP2Form
