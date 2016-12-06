@@ -168,10 +168,12 @@ namespace MP2.model
                             //Debug.WriteLine(frameDifference + " " + thresholdTransition + " " + accumulatedDifference + " " + thresholdBreak);
                             if (accumulatedDifference > thresholdBreak)
                             {
+                                Debug.WriteLine("new transition");
                                 for (int j = startIndex; j < i; j++)
                                 {
                                     //shotBoundaries.Add(imgPaths[j + 1]);
                                     transitionShots.Add(imgPaths[j + 1]);
+                                    endShots.Add(imgPaths[i/2]);
                                 }
 
                                 accumulatedDifference = 0;
