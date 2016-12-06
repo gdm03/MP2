@@ -97,17 +97,17 @@ namespace MP2.model
             Dictionary<int, int> hist2 = new Dictionary<int, int>();
             double[] differenceHistogram = new double[imgPaths.Count - 1];
 
+            List<Dictionary<int, int>> allHistograms = new List<Dictionary<int, int>>();
+
             // histogram difference 
             hist1 = quantizeImage(imgPaths[0]);
-
-            //foreach (String s in imgPaths) Debug.WriteLine(s);
-
+            allHistograms.Add(quantizeImage(imgPaths[0]));
             for (int i = 1; i < imgPaths.Count; i++)
             {
                 hist2 = quantizeImage(imgPaths[i]);
+                allHistograms.Add(quantizeImage(imgPaths[i]));
                 differenceHistogram[i - 1] = computeHistogramDifference(hist1, hist2);
                 hist1 = hist2;
-                //Debug.WriteLine("["+ (i-1) + "] " + differenceHistogram[i - 1]);
             }
 
             //Debug.WriteLine("i: " + differenceHistogram.ToList().IndexOf(differenceHistogram.Max()) + " value: " + differenceHistogram.Max());
@@ -127,8 +127,7 @@ namespace MP2.model
             int transitionCounter = 0;
             bool transitioning = false;
             double accumulatedDifference = 0; // AC
-            double frameDifference = 0;
-            int startIndex = 0;
+            int startIndex = -1;
 
             shotBoundaries.Add(imgPaths[0]); //Fs
 
@@ -147,6 +146,7 @@ namespace MP2.model
                     if (!transitioning)
                     {
                         shotBoundaries.Add(imgPaths[i]); // mark potential GT
+                        transitionShots.Add(imgPaths[i]);
                         startIndex = i;
                         transitioning = true;
                     }
@@ -154,22 +154,18 @@ namespace MP2.model
 
                 else // x < Ts < Tb
                 {
+                    //if (transitioning && startIndex > -1)
                     if (transitioning)
                     {
+                        //if (transitionCounter < transitionFrameTolerance && computeHistogramDifference(allHistograms[startIndex], allHistograms[i]) > thresholdBreak)
                         if (transitionCounter < transitionFrameTolerance)
                         {
+                            accumulatedDifference += computeHistogramDifference(allHistograms[i], allHistograms[i + 1]);
                             transitionCounter++;
-                            frameDifference = differenceHistogram[i + 1] - differenceHistogram[i];
-
-                           if (frameDifference > thresholdTransition)
-                                accumulatedDifference += differenceHistogram[i];
-                           else
-                                shotBoundaries.Remove(imgPaths[startIndex]);
                         }
                         else
                         {
                             //Debug.WriteLine(frameDifference + " " + thresholdTransition + " " + accumulatedDifference + " " + thresholdBreak);
-                            //if (frameDifference < thresholdTransition && accumulatedDifference > thresholdBreak)
                             if (accumulatedDifference > thresholdBreak)
                             {
                                 for (int j = startIndex; j < i; j++)
@@ -180,6 +176,7 @@ namespace MP2.model
 
                                 accumulatedDifference = 0;
                             }
+                            startIndex = -1;
                             transitioning = false;
                             transitionCounter = 0;
                         }
