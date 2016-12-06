@@ -204,7 +204,21 @@ namespace MP2.model
         public List<string> returnKeyframes()
         {
             List<List<string>> shots = null;
-            //do shot boundaries, to get shots
+            List<string> endBoundaries = null;
+
+            List<string> currShot = new List<string>();
+            int boundaryIndex = 0;
+            foreach (string s in imgPaths)
+            {
+                currShot.Add(s);
+                if (s.Equals(endBoundaries[boundaryIndex]))
+                {
+                    shots.Add(currShot);
+                    currShot = new List<string>();
+                    boundaryIndex++;
+                }
+                
+            }
 
             foreach (List<string> shot in shots)
             {
