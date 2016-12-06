@@ -124,6 +124,9 @@ namespace MP2.model
             double accumulatedDifference = 0; // AC
             double frameDifference = 0;
             int startIndex = 0;
+            List<String> startShots = new List<String>();
+            List<String> endShots = new List<String>();
+            List<String> transitionShots = new List<String>();
 
             shotBoundaries.Add(imgPaths[0]); //Fs
 
@@ -132,7 +135,9 @@ namespace MP2.model
                 if (differenceHistogram[i] > thresholdBreak)
                 {
                     shotBoundaries.Add(imgPaths[i]);
+                    endShots.Add(imgPaths[i]);
                     shotBoundaries.Add(imgPaths[i + 1]);
+                    startShots.Add(imgPaths[i + 1]);
                 }
 
                 else if (differenceHistogram[i] > thresholdTransition)
@@ -166,6 +171,7 @@ namespace MP2.model
                                 for (int j = startIndex; j < i; j++)
                                 {
                                     shotBoundaries.Add(imgPaths[j + 1]);
+                                    transitionShots.Add(imgPaths[j + 1]);
                                 }
                             }
                             transitioning = false;
@@ -178,8 +184,19 @@ namespace MP2.model
             if (!shotBoundaries.Contains(imgPaths[imgPaths.Count - 1]))
                 shotBoundaries.Add(imgPaths[imgPaths.Count - 1]);
 
-            foreach (String s in shotBoundaries)
+            //foreach (String s in shotBoundaries)
+            Debug.WriteLine("Start Shots");
+            foreach (String s in startShots)
                 Debug.WriteLine(s);
+
+            Debug.WriteLine("End Shots");
+            foreach (String s in endShots)
+                Debug.WriteLine(s);
+
+            Debug.WriteLine("Transition Shots");
+            foreach (String s in transitionShots)
+                Debug.WriteLine(s);
+
 
             return shotBoundaries;
         }
