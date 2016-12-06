@@ -16,6 +16,11 @@ namespace MP2.model
         private List<String> imgPaths;
         private List<String> shotBoundaries;
         private List<String> keyframes;
+        
+        List<String> startShots = new List<String>();
+        List<String> endShots = new List<String>();
+        List<String> transitionShots = new List<String>();
+
         public static int width = 176;
         public static int height = 144;
 
@@ -116,7 +121,7 @@ namespace MP2.model
             int alpha = 5;
             // threshold
             double thresholdBreak = mean + alpha * stdev;
-            double thresholdTransition = mean * 2;
+            double thresholdTransition = mean * 1.5;
             //Debug.WriteLine(mean + " " + stdev);
             int transitionFrameTolerance = 3;
             int transitionCounter = 0;
@@ -124,9 +129,6 @@ namespace MP2.model
             double accumulatedDifference = 0; // AC
             double frameDifference = 0;
             int startIndex = 0;
-            List<String> startShots = new List<String>();
-            List<String> endShots = new List<String>();
-            List<String> transitionShots = new List<String>();
 
             shotBoundaries.Add(imgPaths[0]); //Fs
 
@@ -159,20 +161,24 @@ namespace MP2.model
                             transitionCounter++;
                             frameDifference = differenceHistogram[i + 1] - differenceHistogram[i];
 
-                            if (frameDifference > thresholdTransition)
+                           if (frameDifference > thresholdTransition)
                                 accumulatedDifference += differenceHistogram[i];
-                            else
+                           else
                                 shotBoundaries.Remove(imgPaths[startIndex]);
                         }
                         else
                         {
-                            if (frameDifference < thresholdTransition && accumulatedDifference > thresholdBreak)
+                            //Debug.WriteLine(frameDifference + " " + thresholdTransition + " " + accumulatedDifference + " " + thresholdBreak);
+                            //if (frameDifference < thresholdTransition && accumulatedDifference > thresholdBreak)
+                            if (accumulatedDifference > thresholdBreak)
                             {
                                 for (int j = startIndex; j < i; j++)
                                 {
                                     shotBoundaries.Add(imgPaths[j + 1]);
                                     transitionShots.Add(imgPaths[j + 1]);
                                 }
+
+                                accumulatedDifference = 0;
                             }
                             transitioning = false;
                             transitionCounter = 0;
