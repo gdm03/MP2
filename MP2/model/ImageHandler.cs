@@ -16,6 +16,8 @@ namespace MP2.model
         private List<String> imgPaths;
         private List<String> shotBoundaries;
         private List<String> keyframes;
+        public static int width = 176;
+        public static int height = 144;
 
         public ImageHandler(String path)
         {
@@ -53,6 +55,23 @@ namespace MP2.model
         {
             int[] histBins1 = new int[64];
             int[] histBins2 = new int[64];
+            double difference = 0;
+
+            for (int i = 0; i < 64; i++)
+            {
+                hist1.TryGetValue(i, out histBins1[i]);
+                hist2.TryGetValue(i, out histBins2[i]);
+                //differenceHistogram[i] = Math.Abs(histBins1[i] - histBins2[i]);
+                difference += Math.Abs(histBins1[i] - histBins2[i]);
+                //Debug.WriteLine("[" + i + "]: " + histBins1[i] + " - " + histBins2[i] + " = " + Math.Abs(histBins1[i] - histBins2[i]));
+            }
+            return difference;
+        }
+
+        public double computeHistogramDifference(Dictionary<int, double> hist1, Dictionary<int, double> hist2)
+        {
+            double[] histBins1 = new double[64];
+            double[] histBins2 = new double[64];
             double difference = 0;
 
             for (int i = 0; i < 64; i++)
@@ -104,9 +123,82 @@ namespace MP2.model
             return shotBoundaries;
         }
 
-        public List<String> returnKeyframes()
+        public List<string> returnKeyframes()
         {
+            List<List<string>> shots = null;
+            //do shot boundaries, to get shots
+
+            foreach (List<string> shot in shots)
+            {
+                Dictionary<string, Dictionary<int, int>> histograms = new Dictionary<string, Dictionary<int, int>>();
+                Dictionary<string, Dictionary<int, double>> normalizedHistograms = new Dictionary<string, Dictionary<int, double>>();
+                Dictionary<string, double> distances = new Dictionary<string, double>();
+
+                foreach (string s in shot)
+                {
+                    histograms.Add(s, quantizeImage(s));
+                    normalizedHistograms.Add(s, getNormalizedHistogram(quantizeImage(s)));
+                }
+
+                Dictionary<int, double> averageHistogram = getNormalizedHistogram(getAverageHistogram(histograms));
+                foreach(KeyValuePair<String, Dictionary<int, double>> entry in normalizedHistograms)
+                {
+                    double difference = computeHistogramDifference(entry.Value, averageHistogram);
+                    distances.Add(entry.Key, difference);
+                }
+
+                foreach (KeyValuePair<string,double> entry in distances.OrderBy(pair => pair.Value).Take(1)) //take lowest difference
+                {
+                    keyframes.Add(entry.Key);
+                }
+
+            }
             return keyframes;
+        }
+
+        /** for key frame detection, pads 0's to every bin */
+        private Dictionary<int, double> getNormalizedHistogram(Dictionary<int, int> hist)
+        {
+            Dictionary<int, double> normHist = new Dictionary<int, double>();
+            double divisor = width * height;
+            for (int i = 0; i < 64; i++)
+            {
+                int val;
+                hist.TryGetValue(i, out val);
+                normHist.Add(i, val / divisor);
+            }
+            return normHist;
+        }
+
+        private Dictionary<int, double> getNormalizedHistogram(Dictionary<int, double> hist)
+        {
+            Dictionary<int, double> normHist = new Dictionary<int, double>();
+            double divisor = width * height;
+            for (int i = 0; i < 64; i++)
+            {
+                double val;
+                hist.TryGetValue(i, out val);
+                normHist.Add(i, val / divisor);
+            }
+            return normHist;
+        }
+
+        private Dictionary<int,double> getAverageHistogram(Dictionary<string, Dictionary<int, int>> histograms)
+        {
+            Dictionary<int, double> avghist = new Dictionary<int, double>();
+            for (int i = 0; i < 64; i++)
+            {
+                double ave = 0;
+                foreach(Dictionary<int,int> hist in histograms.Values)
+                {
+                    int val;
+                    hist.TryGetValue(i, out val);
+                    ave += val;
+                }
+
+                avghist.Add(i, ave/histograms.Count);
+            }
+            return avghist;
         }
     }
 }
