@@ -173,9 +173,8 @@ namespace MP2.model
                                 {
                                     //shotBoundaries.Add(imgPaths[j + 1]);
                                     transitionShots.Add(imgPaths[j + 1]);
-                                    endShots.Add(imgPaths[i/2]);
                                 }
-
+                                endShots.Add(imgPaths[i - 1]);
                                 accumulatedDifference = 0;
                             }
                             startIndex = -1;
@@ -194,11 +193,11 @@ namespace MP2.model
             Debug.WriteLine("Start Shots");
             foreach (String s in startShots)
                 Debug.WriteLine(s);
-
+                */
             Debug.WriteLine("End Shots");
             foreach (String s in endShots)
                 Debug.WriteLine(s);
-
+/*
             Debug.WriteLine("Transition Shots");
             foreach (String s in transitionShots)
                 Debug.WriteLine(s);
@@ -211,7 +210,6 @@ namespace MP2.model
         {
             return transitionShots;
         }
-
         public List<string> returnKeyframes()
         {
             keyframes = new List<string>();
@@ -219,6 +217,7 @@ namespace MP2.model
             List<List<string>> shots = new List<List<string>>();
             List<string> currShot = new List<string>();
             int boundaryIndex = 0;
+            endShots.Sort();
             for (int i = 0; i< imgPaths.Count; i++)
             {
                 string s = imgPaths[i];
@@ -238,7 +237,7 @@ namespace MP2.model
 
             foreach (List<string> shot in shots)
             {
-                //Console.WriteLine("New shot");
+                Console.WriteLine("New shot");
                 Dictionary<string, Dictionary<int, int>> histograms = new Dictionary<string, Dictionary<int, int>>();
                 Dictionary<string, Dictionary<int, double>> normalizedHistograms = new Dictionary<string, Dictionary<int, double>>();
                 Dictionary<string, double> distances = new Dictionary<string, double>();
