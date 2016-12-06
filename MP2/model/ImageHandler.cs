@@ -145,7 +145,7 @@ namespace MP2.model
                 {
                     if (!transitioning)
                     {
-                        shotBoundaries.Add(imgPaths[i]); // mark potential GT
+                        //shotBoundaries.Add(imgPaths[i]); // mark potential GT
                         transitionShots.Add(imgPaths[i]);
                         startIndex = i;
                         transitioning = true;
@@ -170,7 +170,7 @@ namespace MP2.model
                             {
                                 for (int j = startIndex; j < i; j++)
                                 {
-                                    shotBoundaries.Add(imgPaths[j + 1]);
+                                    //shotBoundaries.Add(imgPaths[j + 1]);
                                     transitionShots.Add(imgPaths[j + 1]);
                                 }
 
@@ -188,6 +188,7 @@ namespace MP2.model
                 shotBoundaries.Add(imgPaths[imgPaths.Count - 1]);
 
             //foreach (String s in shotBoundaries)
+            /*
             Debug.WriteLine("Start Shots");
             foreach (String s in startShots)
                 Debug.WriteLine(s);
@@ -200,8 +201,13 @@ namespace MP2.model
             foreach (String s in transitionShots)
                 Debug.WriteLine(s);
 
-
+            */
             return shotBoundaries;
+        }
+
+        public List<String> returnTransitionShots()
+        {
+            return transitionShots;
         }
 
         public List<string> returnKeyframes()

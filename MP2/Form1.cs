@@ -30,6 +30,7 @@ namespace MP2
                 ImageHandler imgHandler = new ImageHandler(fbd.SelectedPath);
                 displayShotBoundaries(imgHandler.returnShotBoundaries());
                 displayKeyframes(imgHandler.returnKeyframes());
+                displayTransitions(imgHandler.returnTransitionShots());
             }
         }
 
@@ -92,6 +93,37 @@ namespace MP2
                 panel2.Controls.Add(pc);
             }
         }
+        
+        private void displayTransitions(List<String> paths)
+        {
+            List<int> bottomlist = new List<int>();
+            int c = 0;
+            panel3.Controls.Clear();
+            foreach (String s in paths)
+            {
+                //Debug.WriteLine(s);
+                PictureBox pc = new PictureBox();
+                Image imgTest = new Bitmap(s);
+                pc.Image = imgTest;
+                pc.Size = imgTest.Size;
+                if (c == 0)
+                {
+                    bottomlist.Add(pc.Bottom + 8);
+                    pc.Top = 8;
+                    pc.Left = 8;
+                }
+
+                else
+                {
+                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + 8);
+                    pc.Top = bottomlist[c - 1] + 8;
+                    pc.Left = 8;
+                }
+                c++;
+                panel3.Controls.Add(pc);
+            }
+        }
+
         private void label1_Click(object sender, EventArgs e)
         {
 
