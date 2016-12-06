@@ -29,6 +29,7 @@ namespace MP2
                 Debug.WriteLine(fbd.SelectedPath);
                 ImageHandler imgHandler = new ImageHandler(fbd.SelectedPath);
                 displayShotBoundaries(imgHandler.returnShotBoundaries());
+                displayKeyframes(imgHandler.returnKeyframes());
             }
         }
 
