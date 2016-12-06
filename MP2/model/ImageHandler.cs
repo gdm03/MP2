@@ -209,31 +209,38 @@ namespace MP2.model
 
         public List<string> returnKeyframes()
         {
-            List<List<string>> shots = null;
-            List<string> endBoundaries = null;
+            keyframes = new List<string>();
 
+            List<List<string>> shots = new List<List<string>>();
             List<string> currShot = new List<string>();
             int boundaryIndex = 0;
-            foreach (string s in imgPaths)
+            for (int i = 0; i< imgPaths.Count; i++)
             {
+                string s = imgPaths[i];
                 currShot.Add(s);
-                if (s.Equals(endBoundaries[boundaryIndex]))
+                if (s.Equals(endShots[boundaryIndex]))
                 {
                     shots.Add(currShot);
                     currShot = new List<string>();
-                    boundaryIndex++;
+                    if(boundaryIndex < endShots.Count - 1)
+                        boundaryIndex++;
                 }
-                
+                if (i == imgPaths.Count - 1)
+                {
+                    shots.Add(currShot);
+                }
             }
 
             foreach (List<string> shot in shots)
             {
+                //Console.WriteLine("New shot");
                 Dictionary<string, Dictionary<int, int>> histograms = new Dictionary<string, Dictionary<int, int>>();
                 Dictionary<string, Dictionary<int, double>> normalizedHistograms = new Dictionary<string, Dictionary<int, double>>();
                 Dictionary<string, double> distances = new Dictionary<string, double>();
 
                 foreach (string s in shot)
                 {
+                    //Console.WriteLine("Img: " + s);
                     histograms.Add(s, quantizeImage(s));
                     normalizedHistograms.Add(s, getNormalizedHistogram(quantizeImage(s)));
                 }
@@ -248,6 +255,7 @@ namespace MP2.model
                 foreach (KeyValuePair<string,double> entry in distances.OrderBy(pair => pair.Value).Take(1)) //take lowest difference
                 {
                     keyframes.Add(entry.Key);
+                    Console.WriteLine("difference: " + entry.Value);
                 }
 
             }
