@@ -102,11 +102,11 @@ namespace MP2.model
                 hist2 = quantizeImage(imgPaths[i]);
                 differenceHistogram[i - 1] = computeHistogramDifference(hist1, hist2);
                 hist1 = hist2;
-                Debug.WriteLine("["+ (i-1) + "] " + differenceHistogram[i - 1]);
+                //Debug.WriteLine("["+ (i-1) + "] " + differenceHistogram[i - 1]);
             }
 
             //Debug.WriteLine("i: " + differenceHistogram.ToList().IndexOf(differenceHistogram.Max()) + " value: " + differenceHistogram.Max());
-            Debug.WriteLine("done");
+            //Debug.WriteLine("done");
 
             double mean = differenceHistogram.Average();
             double ssd = differenceHistogram.Sum(x => (x - mean) * (x - mean)); // sum of squared differences
@@ -116,9 +116,70 @@ namespace MP2.model
             int alpha = 5;
             // threshold
             double thresholdBreak = mean + alpha * stdev;
-            double thresholdTransition;
-            Debug.WriteLine(thresholdBreak);
+            double thresholdTransition = mean * 2;
+            //Debug.WriteLine(mean + " " + stdev);
+            int transitionFrameTolerance = 3;
+            int transitionCounter = 0;
+            bool transitioning = false;
+            double accumulatedDifference = 0; // AC
+            double frameDifference = 0;
+            int startIndex = 0;
 
+            shotBoundaries.Add(imgPaths[0]); //Fs
+
+            for (int i = 0; i < differenceHistogram.Length; i++)
+            {
+                if (differenceHistogram[i] > thresholdBreak)
+                {
+                    shotBoundaries.Add(imgPaths[i]);
+                    shotBoundaries.Add(imgPaths[i + 1]);
+                }
+
+                else if (differenceHistogram[i] > thresholdTransition)
+                {
+                    if (!transitioning)
+                    {
+                        shotBoundaries.Add(imgPaths[i]); // mark potential GT
+                        startIndex = i;
+                        transitioning = true;
+                    }
+                }
+
+                else // x < Ts < Tb
+                {
+                    if (transitioning)
+                    {
+                        if (transitionCounter < transitionFrameTolerance)
+                        {
+                            transitionCounter++;
+                            frameDifference = differenceHistogram[i + 1] - differenceHistogram[i];
+
+                            if (frameDifference > thresholdTransition)
+                                accumulatedDifference += differenceHistogram[i];
+                            else
+                                shotBoundaries.Remove(imgPaths[startIndex]);
+                        }
+                        else
+                        {
+                            if (frameDifference < thresholdTransition && accumulatedDifference > thresholdBreak)
+                            {
+                                for (int j = startIndex; j < i; j++)
+                                {
+                                    shotBoundaries.Add(imgPaths[j + 1]);
+                                }
+                            }
+                            transitioning = false;
+                            transitionCounter = 0;
+                        }
+                    }
+                }
+            }
+            
+            if (!shotBoundaries.Contains(imgPaths[imgPaths.Count - 1]))
+                shotBoundaries.Add(imgPaths[imgPaths.Count - 1]);
+
+            foreach (String s in shotBoundaries)
+                Debug.WriteLine(s);
 
             return shotBoundaries;
         }

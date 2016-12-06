@@ -28,9 +28,71 @@ namespace MP2
             {
                 Debug.WriteLine(fbd.SelectedPath);
                 ImageHandler imgHandler = new ImageHandler(fbd.SelectedPath);
-                imgHandler.returnShotBoundaries();
+                displayShotBoundaries(imgHandler.returnShotBoundaries());
             }
+        }
 
+        private void displayShotBoundaries(List<String> paths)
+        {
+            List<int> bottomlist = new List<int>();
+            int c = 0;
+            panel1.Controls.Clear();
+            foreach (String s in paths)
+            {
+                //Debug.WriteLine(s);
+                PictureBox pc = new PictureBox();
+                Image imgTest = new Bitmap(s);
+                pc.Image = imgTest;
+                pc.Size = imgTest.Size;
+                if (c == 0)
+                {
+                    bottomlist.Add(pc.Bottom + 8);
+                    pc.Top = 8;
+                    pc.Left = 8;
+                }
+
+                else
+                {
+                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + 8);
+                    pc.Top = bottomlist[c - 1] + 8;
+                    pc.Left = 8;
+                }
+                c++;
+                panel1.Controls.Add(pc);
+            }
+        }
+
+        private void displayKeyframes(List<String> paths)
+        {
+            List<int> bottomlist = new List<int>();
+            int c = 0;
+            panel2.Controls.Clear();
+            foreach (String s in paths)
+            {
+                //Debug.WriteLine(s);
+                PictureBox pc = new PictureBox();
+                Image imgTest = new Bitmap(s);
+                pc.Image = imgTest;
+                pc.Size = imgTest.Size;
+                if (c == 0)
+                {
+                    bottomlist.Add(pc.Bottom + 8);
+                    pc.Top = 8;
+                    pc.Left = 8;
+                }
+
+                else
+                {
+                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + 8);
+                    pc.Top = bottomlist[c - 1] + 8;
+                    pc.Left = 8;
+                }
+                c++;
+                panel2.Controls.Add(pc);
+            }
+        }
+        private void label1_Click(object sender, EventArgs e)
+        {
 
         }
     }
