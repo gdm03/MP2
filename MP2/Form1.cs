@@ -66,29 +66,23 @@ namespace MP2
 
         private void displayKeyframes(List<String> paths)
         {
-            List<int> bottomlist = new List<int>();
+            //List<int> bottomlist = new List<int>();
             int c = 0;
+            int i = 0;
             panel2.Controls.Clear();
             foreach (String s in paths)
             {
                 //Debug.WriteLine(s);
                 PictureBox pc = new PictureBox();
                 Image imgTest = new Bitmap(s);
+
                 pc.Image = imgTest;
                 pc.Size = imgTest.Size;
-                if (c == 0)
-                {
-                    bottomlist.Add(pc.Bottom + 8);
-                    pc.Top = 8;
-                    pc.Left = 8;
-                }
-
-                else
-                {
-                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + 8);
-                    pc.Top = bottomlist[c - 1] + 8;
-                    pc.Left = 8;
-                }
+                
+                pc.Top = 8 + i * 160;
+                pc.Left = 8 + (c%3) * 200;
+                if (c % 3 == 2)
+                    i++;
                 c++;
                 panel2.Controls.Add(pc);
             }
