@@ -41,50 +41,72 @@ namespace MP2
             panel1.Controls.Clear();
             foreach (String s in paths)
             {
-                //Debug.WriteLine(s);
                 PictureBox pc = new PictureBox();
                 Image imgTest = new Bitmap(s);
                 pc.Image = imgTest;
                 pc.Size = imgTest.Size;
+
+                Label txt = new Label();
                 if (c == 0)
                 {
                     bottomlist.Add(pc.Bottom + 8);
                     pc.Top = 8;
                     pc.Left = 8;
+                    txt.Text = Path.GetFileName(s);
+                    txt.Top = pc.Bottom + 4;
+                    txt.Left = pc.Left;
                 }
 
                 else
                 {
-                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + 8);
-                    pc.Top = bottomlist[c - 1] + 8;
+                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + txt.Height + 8);
+                    pc.Top = bottomlist[c - 1] + txt.Height + 8;
                     pc.Left = 8;
+                    txt.Text = Path.GetFileName(s);
+                    txt.Top = pc.Bottom + 4;
+                    txt.Left = pc.Left;
                 }
                 c++;
                 panel1.Controls.Add(pc);
+                panel1.Controls.Add(txt);
             }
         }
 
         private void displayKeyframes(List<String> paths)
         {
-            //List<int> bottomlist = new List<int>();
+            List<int> bottomlist = new List<int>();
             int c = 0;
-            int i = 0;
             panel2.Controls.Clear();
             foreach (String s in paths)
             {
-                //Debug.WriteLine(s);
                 PictureBox pc = new PictureBox();
                 Image imgTest = new Bitmap(s);
-
                 pc.Image = imgTest;
                 pc.Size = imgTest.Size;
-                
-                pc.Top = 8 + i * 160;
-                pc.Left = 8 + (c%3) * 200;
-                if (c % 3 == 2)
-                    i++;
+
+                Label txt = new Label();
+                if (c == 0)
+                {
+                    bottomlist.Add(pc.Bottom + 8);
+                    pc.Top = 8;
+                    pc.Left = 8;
+                    txt.Text = Path.GetFileName(s);
+                    txt.Top = pc.Bottom + 4;
+                    txt.Left = pc.Left;
+                }
+
+                else
+                {
+                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + txt.Height + 8);
+                    pc.Top = bottomlist[c - 1] + txt.Height + 8;
+                    pc.Left = 8;
+                    txt.Text = Path.GetFileName(s);
+                    txt.Top = pc.Bottom + 4;
+                    txt.Left = pc.Left;
+                }
                 c++;
                 panel2.Controls.Add(pc);
+                panel2.Controls.Add(txt);
             }
         }
         
@@ -95,26 +117,34 @@ namespace MP2
             panel3.Controls.Clear();
             foreach (String s in paths)
             {
-                //Debug.WriteLine(s);
                 PictureBox pc = new PictureBox();
                 Image imgTest = new Bitmap(s);
                 pc.Image = imgTest;
                 pc.Size = imgTest.Size;
+
+                Label txt = new Label();
                 if (c == 0)
                 {
                     bottomlist.Add(pc.Bottom + 8);
                     pc.Top = 8;
                     pc.Left = 8;
+                    txt.Text = Path.GetFileName(s);
+                    txt.Top = pc.Bottom + 4;
+                    txt.Left = pc.Left;
                 }
 
                 else
                 {
-                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + 8);
-                    pc.Top = bottomlist[c - 1] + 8;
+                    bottomlist.Add(pc.Bottom + bottomlist[c - 1] + txt.Height + 8);
+                    pc.Top = bottomlist[c - 1] + txt.Height + 8;
                     pc.Left = 8;
+                    txt.Text = Path.GetFileName(s);
+                    txt.Top = pc.Bottom + 4;
+                    txt.Left = pc.Left;
                 }
                 c++;
                 panel3.Controls.Add(pc);
+                panel3.Controls.Add(txt);
             }
         }
 
